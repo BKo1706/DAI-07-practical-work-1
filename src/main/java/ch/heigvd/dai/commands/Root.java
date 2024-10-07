@@ -24,9 +24,17 @@ public class Root {
             required = true)
     protected AvailableAlgorithms algorithm;
 
+    @CommandLine.Option(
+            names = {"-k", "--key"},
+            description = "The name of the file in which the secret key used for encryption/decryption is stored",
+            required = true)
+    protected String keyfilename;
+
     public String getFilename() {return filename;}
 
     public AvailableAlgorithms getAlgorithm() {
         return algorithm;
     }
+
+    public String getKey() {return keyfilename;}
 }
