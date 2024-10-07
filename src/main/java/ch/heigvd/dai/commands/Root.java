@@ -24,9 +24,7 @@ public class Root {
             required = true)
     protected AvailableAlgorithms algorithm;
 
-    public String getFilename() {
-        return filename;
-    }
+    public String getFilename() {return filename;}
 
     public AvailableAlgorithms getAlgorithm() {
         return algorithm;
