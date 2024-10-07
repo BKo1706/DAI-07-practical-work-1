@@ -3,20 +3,18 @@ package ch.heigvd.dai.commands;
 import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.security.Key;
-import java.util.Base64;
 
-@CommandLine.Command(name = "encrypt", description = "encrypt a file.")
-public class Encrypt {
-    @CommandLine.ParentCommand protected Root parent;
-    public static void encryptFile(String key, String inputFile, String outputFile) throws Exception {
-        SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), parent.getAlgorithm());
-        Cipher cipher = Cipher.getInstance(parent.getAlgorithm());
+@CommandLine.Command(name = "encrypt", description = "Encrypt a file.")
+public class Encrypt implements Callable<Integer> {
+    @CommandLine.ParentCommand
+    protected Root parent;
+
+    public static void encryptFile(String key, String algorithm, String inputFile, String outputFile) throws Exception {
+        SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), algorithm);
+        Cipher cipher = Cipher.getInstance(algorithm);
         cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
         FileInputStream inputStream = new FileInputStream(inputFile);
@@ -30,5 +28,11 @@ public class Encrypt {
 
         inputStream.close();
         outputStream.close();
+    }
+
+    @Override
+    public Integer call() throws Exception {
+        encryptFile(parent.getKey(), parent.getAlgorithm().toString(), parent.getFilename(), parent.getFilename() + ".enc");
+        return 0;
     }
 }
