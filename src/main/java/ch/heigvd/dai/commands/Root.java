@@ -1,4 +1,5 @@
 package ch.heigvd.dai.commands;
+
 import picocli.CommandLine;
 
 @CommandLine.Command(
@@ -7,15 +8,18 @@ import picocli.CommandLine;
         subcommands = {
                 Encrypt.class,
                 Decrypt.class,
+                CreateKey.class
         },
         scope = CommandLine.ScopeType.INHERIT,
         mixinStandardHelpOptions = true)
 public class Root {
 
     public enum AvailableAlgorithms {
-        AES
+        AES,
+        RSA,
+        DES
     }
-    @CommandLine.Parameters(index = "0", description = "The name of the file.")
+    @CommandLine.Parameters(index = "0", description = "The name of the file to encrypt or decrypt.")
     protected String filename;
 
     @CommandLine.Option(
@@ -30,11 +34,9 @@ public class Root {
             required = true)
     protected String keyfilename;
 
+
+    // Getters
     public String getFilename() {return filename;}
-
-    public AvailableAlgorithms getAlgorithm() {
-        return algorithm;
-    }
-
+    public AvailableAlgorithms getAlgorithm() {return algorithm;}
     public String getKey() {return keyfilename;}
 }

@@ -18,7 +18,7 @@ public class Decrypt implements Callable<Integer> {
         cipher.init(Cipher.DECRYPT_MODE, secretKey);
 
         FileInputStream inputStream = new FileInputStream(inputFile);
-        byte[] inputBytes = new byte[(int) inputStream.available()];
+        byte[] inputBytes = new byte[inputStream.available()];
         inputStream.read(inputBytes);
 
         byte[] outputBytes = cipher.doFinal(inputBytes);
