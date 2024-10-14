@@ -12,6 +12,12 @@ public class Decrypt implements Callable<Integer> {
     @CommandLine.ParentCommand
     protected Root parent;
 
+    @CommandLine.Option(
+            names = {"-k", "--key"},
+            description = "The name of the file in which the secret key used for encryption/decryption is stored",
+            required = true)
+    protected String keyfilename;
+
     public static void decryptFile(String key, String algorithm, String inputFile, String outputFile) throws Exception {
         SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), algorithm);
         Cipher cipher = Cipher.getInstance(algorithm);
@@ -32,7 +38,7 @@ public class Decrypt implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        decryptFile(parent.getKey(), parent.getAlgorithm().toString(), parent.getFilename(), parent.getFilename() + ".dec");
+        decryptFile(this.keyfilename, parent.getAlgorithm().toString(), parent.getFilename(), parent.getFilename() + ".dec");
         return 0;
     }
 }
