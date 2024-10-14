@@ -12,6 +12,12 @@ public class Encrypt implements Callable<Integer> {
     @CommandLine.ParentCommand
     protected Root parent;
 
+    @CommandLine.Option(
+            names = {"-k", "--key"},
+            description = "The name of the file in which the secret key used for encryption/decryption is stored",
+            required = true)
+    protected String keyfilename;
+
     public static void encryptFile(String key, String algorithm, String inputFile, String outputFile) throws Exception {
         SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), algorithm);
         Cipher cipher = Cipher.getInstance(algorithm);
@@ -32,7 +38,7 @@ public class Encrypt implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        encryptFile(parent.getKey(), parent.getAlgorithm().toString(), parent.getFilename(), parent.getFilename() + ".enc");
+        encryptFile(this.keyfilename, parent.getAlgorithm().toString(), parent.getFilename(), parent.getFilename() + ".enc");
         return 0;
     }
 }
