@@ -18,6 +18,7 @@ public class Root {
         AES,
         DES
     }
+    
     @CommandLine.Parameters(index = "0", description = "The name of the file to encrypt or decrypt.")
     protected String filename;
 
@@ -31,4 +32,5 @@ public class Root {
     // Getters
     public String getFilename() {return filename;}
     public AvailableAlgorithms getAlgorithm() {return algorithm;}
+
 }
