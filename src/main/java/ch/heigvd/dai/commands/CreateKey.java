@@ -15,9 +15,15 @@ import java.util.concurrent.Callable;
 public class CreateKey implements Callable<Integer> {
     @CommandLine.ParentCommand
     protected Root parent;    
+    
+    @CommandLine.Option(
+            names = {"-l", "--lenght"},
+            description = "The length of the key in bits",
+            required = false)
+    private int keyLenght = 256;
 
     public static void generatePrivKey(String privateKeyFile, String algorithm, int keyLength) throws NoSuchAlgorithmException, IOException {
-        // Générer une clé AES
+        // Générer une privée clé
         KeyGenerator keyGen = KeyGenerator.getInstance(algorithm);
         keyGen.init(keyLength); // Taille de clé
         SecretKey secretKey = keyGen.generateKey();
@@ -32,9 +38,7 @@ public class CreateKey implements Callable<Integer> {
     }
 
     public Integer call() throws Exception {
-        int keyLength = 256; // Longueur de la clé en bits
-
-        generatePrivKey(parent.getFilename(), parent.getAlgorithm().toString(), keyLength);
+        generatePrivKey(parent.getFilename(), parent.getAlgorithm().toString(), keyLenght);
         System.out.println("La clé privée a été générée et sauvegardée avec succès.");
         return 0;
     }
