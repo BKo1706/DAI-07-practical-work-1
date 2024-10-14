@@ -1,17 +1,9 @@
 package ch.heigvd.dai.commands;
+import ch.heigvd.dai.Utils;
 
 import java.util.concurrent.Callable;
 import picocli.CommandLine;
-
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import javax.crypto.Cipher;
-import java.util.Base64;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 
 @CommandLine.Command(name = "decrypt", description = "Decrypt a file.")
 public class Decrypt implements Callable<Integer> {
@@ -24,49 +16,9 @@ public class Decrypt implements Callable<Integer> {
             required = true)
     protected String keyfilename;
 
-    // Fonction pour lire la clé depuis un fichier
-    private static SecretKey loadKeyFromFile(String fileName, String algorithm) {
-        byte[] decodedKey = null;
-        try {
-            byte[] keyBytes = Files.readAllBytes(Paths.get(fileName)); // Lire les bytes de la clé
-            decodedKey = Base64.getDecoder().decode(keyBytes); // Décoder la clé en base64
-        } catch (IOException e) {
-            System.out.println("Error reading key : " + e.getMessage());
-            System.exit(1);
-        }
-        return new SecretKeySpec(decodedKey, algorithm); // Reconstruire la clé
-    }
-
-
-    private static void decryptFile(SecretKey secretKey, String algorithm, String inputFile, String outputFile, int opMode) {
-        try {
-            // Créer un objet Cipher pour l'algorithme choisi
-            Cipher cipher = Cipher.getInstance(algorithm);
-            cipher.init(opMode, secretKey); // Initialiser en mode déchiffrement
-
-            // Lire le fichier chiffré
-            FileInputStream fis = new FileInputStream(inputFile);
-            byte[] inputBytes = new byte[fis.available()];
-            fis.read(inputBytes);
-            fis.close();
-
-            // Déchiffrer les données du fichier
-            byte[] outputBytes = cipher.doFinal(inputBytes);
-
-            // Écrire le fichier déchiffré dans le fichier de sortie
-            FileOutputStream fos = new FileOutputStream(outputFile);
-            fos.write(outputBytes);
-            fos.close();
-            
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-    }
-
     @Override
     public Integer call() throws Exception {
-        SecretKey key = loadKeyFromFile(keyfilename, parent.getAlgorithm().toString());
-        decryptFile(key, parent.getAlgorithm().toString(), parent.getFilename(), parent.getFilename() + ".dec", Cipher.DECRYPT_MODE);
+        Utils.encryptedecryptFile(keyfilename, parent.getAlgorithm().toString(), parent.getFilename(), parent.getFilename() + ".dec", Cipher.DECRYPT_MODE);
         return 0;
     }
 }
