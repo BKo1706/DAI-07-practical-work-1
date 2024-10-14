@@ -37,8 +37,9 @@ public class Utils {
         * @param outputFile : le fichier de sortie
         * @param opMode : le mode de chiffrement (chiffrement ou déchiffrement)
     */
-    public static void encrypteDecryptFile(SecretKey secretKey, String algorithm, String inputFile, String outputFile, int opMode) {
+    public static void encrypteDecryptFile(String secretKeyFile, String algorithm, String inputFile, String outputFile, int opMode) {
         try {
+            SecretKey secretKey = loadKeyFromFile(secretKeyFile, algorithm); // Charger la clé
             // Créer un objet Cipher pour l'algorithme choisi
             Cipher cipher = Cipher.getInstance(algorithm);
             cipher.init(opMode, secretKey); // Initialiser en mode déchiffrement
@@ -62,16 +63,10 @@ public class Utils {
         }
     }
 
-    /*
-     * Fonction pour chiffrer ou déchiffrer un fichier
-     * @param secretKeyFile : le fichier contenant la clé
-     * @param algorithm : l'algorithme de chiffrement utilisé
-     * @param inputFile : le fichier à chiffrer ou déchiffrer
-     * @param outputFile : le fichier de sortie
-     * @param opMode : le mode de chiffrement (chiffrement ou déchiffrement)
-     */
-    public static void encryptedecryptFile(String secretKeyFile, String algorithm, String inputFile, String outputFile, int opMode){
-        SecretKey key = loadKeyFromFile(secretKeyFile, algorithm);
-        encrypteDecryptFile(key, algorithm, inputFile, outputFile, opMode);
+    public static void encrypteFile(String secretKeyFile, String algorithm, String inputFile, String outputFile) {
+        encrypteDecryptFile(secretKeyFile, algorithm, inputFile, outputFile, Cipher.ENCRYPT_MODE);
+    }
+    public static void decrypteFile(String secretKeyFile, String algorithm, String inputFile, String outputFile) {
+        encrypteDecryptFile(secretKeyFile, algorithm, inputFile, outputFile, Cipher.DECRYPT_MODE);
     }
 }
