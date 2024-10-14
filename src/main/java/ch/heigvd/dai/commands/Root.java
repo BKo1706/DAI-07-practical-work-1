@@ -16,7 +16,6 @@ public class Root {
 
     public enum AvailableAlgorithms {
         AES,
-        RSA,
         DES
     }
     @CommandLine.Parameters(index = "0", description = "The name of the file to encrypt or decrypt.")
@@ -24,7 +23,7 @@ public class Root {
 
     @CommandLine.Option(
             names = {"-a", "--algorithm"},
-            description = "The algorithm to use (possible values: ${AES}).",
+            description = "The algorithm to use (possible values:  ${COMPLETION-CANDIDATES}).",
             required = true)
     protected AvailableAlgorithms algorithm;
 
