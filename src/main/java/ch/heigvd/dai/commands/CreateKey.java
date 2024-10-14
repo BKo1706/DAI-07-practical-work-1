@@ -15,9 +15,15 @@ import java.util.concurrent.Callable;
 public class CreateKey implements Callable<Integer> {
     @CommandLine.ParentCommand
     protected Root parent;    
+    
+    @CommandLine.Option(
+            names = {"-l", "--lenght"},
+            description = "The length of the key in bits",
+            required = false)
+    private int keyLenght = 0;
 
     public static void generatePrivKey(String privateKeyFile, String algorithm, int keyLength) throws NoSuchAlgorithmException, IOException {
-        // Générer une clé AES
+        // Générer une privée clé
         KeyGenerator keyGen = KeyGenerator.getInstance(algorithm);
         keyGen.init(keyLength); // Taille de clé
         SecretKey secretKey = keyGen.generateKey();
@@ -31,10 +37,37 @@ public class CreateKey implements Callable<Integer> {
         }
     }
 
-    public Integer call() throws Exception {
-        int keyLength = 256; // Longueur de la clé en bits
+    private boolean isValidKeyLength(int keyLength, int[] validKeySizes) {
+        for (int size : validKeySizes) {
+            if (size == keyLength) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-        generatePrivKey(parent.getFilename(), parent.getAlgorithm().toString(), keyLength);
+    private int getKeyLength() {
+        int[] sizes = parent.getAlgorithm().getKeySizes();
+        if (keyLenght == 0){
+            return sizes[0];
+        } else if(!isValidKeyLength(keyLenght, sizes)) {
+            System.out.print("La taille de la clé n'est pas valide pour cet algorithme. Les tailles de clé valides sont: {");
+            for (int i = 0; i < parent.getAlgorithm().getKeySizes().length; i++) {
+                if (i != 0) 
+                    System.out.print(", ");       
+                System.out.print(sizes[i]);
+            }
+            System.out.println("}");
+            System.exit(1);
+        }
+        return keyLenght;
+    }
+
+    public Integer call() throws Exception {
+        if (parent.getAlgorithm().isDepreciated())
+            System.out.println("Warning: L'algorithme " + parent.getAlgorithm() + " is not recommanded for use.");
+
+        generatePrivKey(parent.getFilename(), parent.getAlgorithm().toString(), getKeyLength());
         System.out.println("La clé privée a été générée et sauvegardée avec succès.");
         return 0;
     }
