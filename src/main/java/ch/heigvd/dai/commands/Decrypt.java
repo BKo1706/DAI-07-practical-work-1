@@ -26,22 +26,23 @@ public class Decrypt implements Callable<Integer> {
 
     // Fonction pour lire la clé depuis un fichier
     private static SecretKey loadKeyFromFile(String fileName, String algorithm) {
+        byte[] decodedKey = null;
         try {
             byte[] keyBytes = Files.readAllBytes(Paths.get(fileName)); // Lire les bytes de la clé
-            byte[] decodedKey = Base64.getDecoder().decode(keyBytes); // Décoder la clé en base64
-            return new SecretKeySpec(decodedKey, algorithm); // Reconstruire la clé
+            decodedKey = Base64.getDecoder().decode(keyBytes); // Décoder la clé en base64
         } catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println("Error reading key : " + e.getMessage());
             System.exit(1);
-            return null;
         }
+        return new SecretKeySpec(decodedKey, algorithm); // Reconstruire la clé
     }
 
-    private static void decryptFile(SecretKey secretKey, String algorithm, String inputFile, String outputFile) {
+
+    private static void decryptFile(SecretKey secretKey, String algorithm, String inputFile, String outputFile, int opMode) {
         try {
             // Créer un objet Cipher pour l'algorithme choisi
             Cipher cipher = Cipher.getInstance(algorithm);
-            cipher.init(Cipher.DECRYPT_MODE, secretKey); // Initialiser en mode déchiffrement
+            cipher.init(opMode, secretKey); // Initialiser en mode déchiffrement
 
             // Lire le fichier chiffré
             FileInputStream fis = new FileInputStream(inputFile);
@@ -64,7 +65,8 @@ public class Decrypt implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        decryptFile(loadKeyFromFile(keyfilename, parent.getAlgorithm().toString()), parent.getAlgorithm().toString(), parent.getFilename(), parent.getFilename() + ".dec");
+        SecretKey key = loadKeyFromFile(keyfilename, parent.getAlgorithm().toString());
+        decryptFile(key, parent.getAlgorithm().toString(), parent.getFilename(), parent.getFilename() + ".dec", Cipher.DECRYPT_MODE);
         return 0;
     }
 }
