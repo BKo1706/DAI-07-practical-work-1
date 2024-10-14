@@ -15,7 +15,7 @@ public class Encrypt implements Callable<Integer> {
             names = {"-k", "--key"},
             description = "The name of the file in which the secret key used for encryption/decryption is stored",
             required = true)
-    protected String keyfilename;
+    private String keyfilename;
 
 
     @Override

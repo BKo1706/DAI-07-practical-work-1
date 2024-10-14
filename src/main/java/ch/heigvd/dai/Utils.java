@@ -12,7 +12,11 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class Utils {
 
-    // Fonction pour lire la clé depuis un fichier
+    /*
+     * Fonction pour charger une clé à partir d'un fichier
+     * @param fileName : le nom du fichier contenant la clé
+     * @param algorithm : l'algorithme de chiffrement utilisé
+     */
     public static SecretKey loadKeyFromFile(String fileName, String algorithm) {
         byte[] decodedKey = null;
         try {
@@ -25,7 +29,14 @@ public class Utils {
         return new SecretKeySpec(decodedKey, algorithm); // Reconstruire la clé
     }
 
-    // Fonction pour chiffrer/déchiffrer un fichier
+    /*
+        * Fonction pour chiffrer ou déchiffrer un fichier
+        * @param secretKey :
+        * @param algorithm : l'algorithme de chiffrement utilisé
+        * @param inputFile : le fichier à chiffrer ou déchiffrer
+        * @param outputFile : le fichier de sortie
+        * @param opMode : le mode de chiffrement (chiffrement ou déchiffrement)
+    */
     public static void encrypteDecryptFile(SecretKey secretKey, String algorithm, String inputFile, String outputFile, int opMode) {
         try {
             // Créer un objet Cipher pour l'algorithme choisi
@@ -51,6 +62,14 @@ public class Utils {
         }
     }
 
+    /*
+     * Fonction pour chiffrer ou déchiffrer un fichier
+     * @param secretKeyFile : le fichier contenant la clé
+     * @param algorithm : l'algorithme de chiffrement utilisé
+     * @param inputFile : le fichier à chiffrer ou déchiffrer
+     * @param outputFile : le fichier de sortie
+     * @param opMode : le mode de chiffrement (chiffrement ou déchiffrement)
+     */
     public static void encryptedecryptFile(String secretKeyFile, String algorithm, String inputFile, String outputFile, int opMode){
         SecretKey key = loadKeyFromFile(secretKeyFile, algorithm);
         encrypteDecryptFile(key, algorithm, inputFile, outputFile, opMode);
