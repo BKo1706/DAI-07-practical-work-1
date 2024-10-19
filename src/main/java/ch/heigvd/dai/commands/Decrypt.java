@@ -15,9 +15,18 @@ public class Decrypt implements Callable<Integer> {
             required = true)
     private String keyfilename;
 
+    @CommandLine.Option(
+        names = {"-o", "--output"},
+        description = "The name of the output file",
+        required = false)
+    private String outputFile = null;
+
     @Override
     public Integer call() throws Exception {
-        Utils.decrypteFile(keyfilename, parent.getAlgorithm().toString(), parent.getFilename(), parent.getFilename() + ".dec");
+        if (outputFile == null) {
+            outputFile = parent.getFilename() + ".dec";
+        }
+        Utils.decrypteFile(keyfilename, parent.getAlgorithm().toString(), parent.getFilename(), outputFile);
         return 0;
     }
 }
