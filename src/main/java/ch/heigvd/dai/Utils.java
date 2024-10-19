@@ -2,9 +2,6 @@ package ch.heigvd.dai;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import javax.crypto.Cipher;
 import java.util.Base64;
 import javax.crypto.SecretKey;
@@ -19,10 +16,11 @@ public class Utils {
      */
     public static SecretKey loadKeyFromFile(String fileName, String algorithm) {
         byte[] decodedKey = null;
-        try {
-            byte[] keyBytes = Files.readAllBytes(Paths.get(fileName)); // Lire les bytes de la clé
+        try (FileInputStream fis = new FileInputStream(fileName);){
+            byte[] keyBytes = new byte[fis.available()]; // Creer un buffer de la taille du fichier
+            fis.read(keyBytes); // Lire le fichier
             decodedKey = Base64.getDecoder().decode(keyBytes); // Décoder la clé en base64
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println("Error reading key : " + e.getMessage());
             System.exit(1);
         }
